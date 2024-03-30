@@ -27,7 +27,7 @@ const CartItem = ({
         to={`/product/${productId}`}
         className="w-full col-span-5 row-start-1 row-end-2"
       >
-        <h3 className="font-medium">{title}</h3>
+        <h3 className="font-medium truncate">{title}</h3>
         <p className="truncate text-sm">{description}</p>
       </Link>
       <p className="col-start-1 col-end-4 row-start-2 row-end-3 flex flex-col items-start">
