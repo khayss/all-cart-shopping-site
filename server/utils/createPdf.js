@@ -31,25 +31,3 @@ export const createPdf = async (cart, checkoutDetails) => {
     return { success: false };
   }
 };
-
-// (async () => {
-//   console.log(
-//     await createPdf(
-//       {
-//         name: "user name",
-//         email: "user@email.com",
-//         address: "jsdhshj ddssd",
-//         tel: "023902390",
-//         city: "ajkjk",
-//       },
-//       {
-//         totalAmount: 50000,
-//         items: [
-//           { title: "ajajsasd", quantity: 4, price: 12 },
-//           { title: "ajajsasd", quantity: 4, price: 12 },
-//           { title: "ajajsasd", quantity: 4, price: 12 },
-//         ],
-//       }
-//     )
-//   );
-// })();

@@ -4,7 +4,7 @@ import { getProductsApi } from "../api";
 export const useGetProducts = () => {
   const [products, setProducts] = useState(null);
   const [isError, setIsError] = useState(false);
-  const [isFetching, setisFetching] = useState(true);
+  const [isFetching, setisFetching] = useState(false);
   useEffect(() => {
     const controller = new AbortController();
     const fetchProduct = async () => {
@@ -24,7 +24,6 @@ export const useGetProducts = () => {
         }
       } catch (error) {
         setIsError(true);
-        setProducts(null);
       } finally {
         setisFetching(false);
       }
@@ -36,5 +35,5 @@ export const useGetProducts = () => {
     };
   }, []);
 
-  return { products, isError, isFetching, setProducts };
+  return { products, isError, isFetching };
 };

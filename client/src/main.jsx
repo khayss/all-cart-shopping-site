@@ -8,12 +8,12 @@ import CheckoutProvider from "./modules/contexts/checkoutContext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <CartProvider>
-      <ProductProvider>
+    <ProductProvider>
+      <CartProvider>
         <CheckoutProvider>
           <App />
         </CheckoutProvider>
-      </ProductProvider>
-    </CartProvider>
+      </CartProvider>
+    </ProductProvider>
   </React.StrictMode>
 );

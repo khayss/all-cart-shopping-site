@@ -2,12 +2,13 @@ import { useContext } from "react";
 import Product from "./components/Product";
 import { ProductContext } from "../../contexts/productContext";
 import { CircularProgress } from "@mui/material";
-import { useAddToCart } from "../../hooks/useAddToCart";
 import ShopError from "../../error";
+import { CartContext, CartDispatchContext } from "../../contexts/cartContext";
 
 const Shop = () => {
   const { products = [], isError, isFetching } = useContext(ProductContext);
-  const { handleAddToCart } = useAddToCart();
+  const { cartDispatch } = useContext(CartDispatchContext);
+  const { cartState } = useContext(CartContext);
 
   return isFetching ? (
     <div className="w-full h-dvh flex flex-col items-center justify-center">
@@ -37,8 +38,10 @@ const Shop = () => {
                 rating={product.rating}
                 stock={product.stock}
                 id={product.id}
-                inCart={product.inCart}
-                onClick={() => handleAddToCart(product)}
+                inCart={!!cartState.items[product.id]}
+                onClick={() =>
+                  cartDispatch({ type: "ADD_TO_CART", payload: product })
+                }
               />
             </div>
           ))}

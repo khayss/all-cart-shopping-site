@@ -9,7 +9,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Link } from "react-router-dom";
 
 const MainLayout = ({ children }) => {
-  const { itemsCount } = useContext(CartContext);
+  const { cartState } = useContext(CartContext);
   const [showHamburger, SetshowHamburger] = useState(false);
   const ref = useRef(null);
   useEffect(() => {
@@ -58,7 +58,7 @@ const MainLayout = ({ children }) => {
                 <Link to={"/cart"}>
                   <ShoppingCartIcon />
                   <p className="absolute top-0 -right-4 shadow-md z-50 bg-red-600 text-white leading-none rounded-full text-sm py-1 px-1.5">
-                    {itemsCount}
+                    {cartState.id.length}
                   </p>
                 </Link>
               </div>

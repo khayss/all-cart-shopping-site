@@ -1,13 +1,14 @@
 import { useContext } from "react";
 import { ProductContext } from "../../contexts/productContext";
 import HomeCard from "./components/HomeCard";
-import { useAddToCart } from "../../hooks/useAddToCart";
 import { CircularProgress } from "@mui/material";
 import HomeError from "../../error";
+import { CartContext, CartDispatchContext } from "../../contexts/cartContext";
 
 const LandingPage = () => {
   const { products, isFetching, isError } = useContext(ProductContext);
-  const { handleAddToCart } = useAddToCart();
+  const { cartDispatch } = useContext(CartDispatchContext);
+  const { cartState } = useContext(CartContext);
   return isFetching && products === null ? (
     <div className="w-full h-dvh flex flex-col items-center justify-center">
       <CircularProgress />
@@ -37,9 +38,11 @@ const LandingPage = () => {
                   key={product.id}
                   header={product.title}
                   src={product.thumbnail}
-                  inCart={product.inCart}
+                  inCart={!!cartState.items[product.id]}
                   to={`/product/${product.id}`}
-                  onClick={() => handleAddToCart(product)}
+                  onClick={() => {
+                    cartDispatch({ type: "ADD_TO_CART", payload: product });
+                  }}
                   withButton={true}
                 />
               ))}
@@ -59,7 +62,6 @@ const LandingPage = () => {
                   key={product.id}
                   header={product.brand}
                   src={product.images[1]}
-                  inCart={product.inCart}
                   to={""}
                 />
               ))}
@@ -79,7 +81,6 @@ const LandingPage = () => {
                   key={product.id}
                   header={product.category}
                   src={product.images[2]}
-                  inCart={product.inCart}
                   to={""}
                 />
               ))}

@@ -4,7 +4,7 @@ import { cardStateReducer, initialCardState } from "./utils/cardStateReducer";
 import ExpirySelect from "./components/CustomSelect";
 import { months, years } from "./utils/monthsAndYears";
 import PaymentButton from "../../components/CustomButton";
-import { CartContext, SetCartContext } from "../../contexts/cartContext";
+import { CartContext, CartDispatchContext } from "../../contexts/cartContext";
 import { CircularProgress } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ErrorIcon from "@mui/icons-material/Error";
@@ -17,8 +17,8 @@ import { initialState } from "../checkout/utils/stateReducer";
 const Payment = () => {
   const [state, dispatch] = useReducer(cardStateReducer, initialCardState);
   const [isDisabled, setIsDisabled] = useState(true);
-  const { totalAmount, cart } = useContext(CartContext);
-  const { setCart } = useContext(SetCartContext);
+  const { totalAmount, cartState } = useContext(CartContext);
+  const { cartDispatch } = useContext(CartDispatchContext);
   const { checkoutDetails, setcheckoutDetails, response, createReceipt } =
     useContext(CheckoutContext);
   const navigate = useNavigate();
@@ -72,13 +72,17 @@ const Payment = () => {
         setShowSuccess(() => {
           return { isSuccess: true, showSuccessMessage: true };
         });
-        createReceipt({ cart: { cart, totalAmount }, checkoutDetails }).then(
-          () => {
-            setCart([]);
-            setcheckoutDetails(initialState);
-            setTimeout(() => navigate("/receipt"), 2000);
-          }
-        );
+        createReceipt({
+          cart: {
+            cart: cartState.id.map((itemId) => cartState.items[itemId]),
+            totalAmount,
+          },
+          checkoutDetails,
+        }).then(() => {
+          cartDispatch({ type: "RESET_CART" });
+          setcheckoutDetails(initialState);
+          setTimeout(() => navigate("/receipt"), 2000);
+        });
       })
 
       .catch(() => {

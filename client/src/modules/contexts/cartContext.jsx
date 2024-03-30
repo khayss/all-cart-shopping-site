@@ -1,32 +1,54 @@
 /* eslint-disable react/prop-types */
-import { createContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+} from "react";
+import { cartReducer, initialCartState } from "../utils/cartReducer";
+import { getLocalCart } from "../utils/cartLocalStorage";
+import { ProductContext } from "./productContext";
 
 export const CartContext = createContext(null);
-export const SetCartContext = createContext(null);
-
-const localCart = JSON.parse(localStorage.getItem("userCart"));
-const initalCart = Array.isArray(localCart) ? localCart : [];
+export const CartDispatchContext = createContext(null);
 
 const CartProvider = ({ children }) => {
-  const [cart, setCart] = useState(initalCart);
+  const { products } = useContext(ProductContext);
+  const localCart = getLocalCart();
+  const [cartState, cartDispatch] = useReducer(
+    cartReducer,
+    localCart ? localCart : initialCartState
+  );
   const [totalAmount, setTotalAmount] = useState(0);
+
   useEffect(() => {
-    localStorage.setItem("userCart", JSON.stringify(cart));
-    const calculateTotal = (items) => {
-      const amounts = items.map((item) => +item.quantity * +item.price);
+    localStorage.setItem("userCart", JSON.stringify(cartState));
+    const calculateTotal = (cart) => {
+      const amounts = cart.id.map(
+        (item) => +cart.items[item].quantity * +cart.items[item].price
+      );
       return amounts.reduce((acc, curr) => +acc + +curr, 0);
     };
-    setTotalAmount(() => calculateTotal(cart));
+    setTotalAmount(() => calculateTotal(cartState));
     return () => {};
-  }, [cart]);
+  }, [cartState]);
+  useEffect(() => {
+    const referenceProduct = products?.slice();
+    cartState.id.map((itemId) => {
+      const inProducts = referenceProduct?.findIndex(
+        (prod) => prod.id === itemId
+      );
+      if (inProducts < 0)
+        cartDispatch({ type: "REMOVE_FROM_CART", payload: itemId });
+    });
+  }, [products, cartState]);
 
   return (
-    <CartContext.Provider
-      value={{ cart, itemsCount: cart.length, totalAmount }}
-    >
-      <SetCartContext.Provider value={{ setCart }}>
+    <CartContext.Provider value={{ cartState, totalAmount }}>
+      <CartDispatchContext.Provider value={{ cartDispatch }}>
         {children}
-      </SetCartContext.Provider>
+      </CartDispatchContext.Provider>
     </CartContext.Provider>
   );
 };

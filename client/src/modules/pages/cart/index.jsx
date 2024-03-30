@@ -1,65 +1,27 @@
-import { useContext, useEffect } from "react";
-import { CartContext, SetCartContext } from "../../contexts/cartContext";
+import { useContext } from "react";
+import { CartContext, CartDispatchContext } from "../../contexts/cartContext";
 import CartItem from "./components/CartItem";
 import CartButton from "../../components/CustomButton";
 import { Link } from "react-router-dom";
 import { numberWithCommas } from "../../utils/formatNumber";
 
 const Cart = () => {
-  const { cart, totalAmount } = useContext(CartContext);
-  const { setCart } = useContext(SetCartContext);
-  useEffect(() => {
-    return () => {};
-  }, [cart]);
+  const {
+    cartState: { id: itemsId, items },
+    totalAmount,
+  } = useContext(CartContext);
+  const { cartDispatch } = useContext(CartDispatchContext);
 
   const handleQuantityChange = (e, id, type) => {
-    setCart((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              quantity:
-                type === "onChange"
-                  ? e.target.value === ""
-                    ? ""
-                    : Math.abs(e.target.value)
-                  : e.target.value === ""
-                  ? 1
-                  : e.target.value == 0
-                  ? 1
-                  : e.target.value > item.stock
-                  ? item.stock
-                  : Math.abs(e.target.value),
-            }
-          : { ...item }
-      )
-    );
+    cartDispatch({ type, payload: { e, id } });
   };
 
-  const handleIncrementDecrement = (action, id) => {
-    setCart((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              quantity:
-                action === "add"
-                  ? item.quantity === item.stock
-                    ? item.quantity
-                    : +item.quantity + 1
-                  : action === "minus"
-                  ? +item.quantity > 1
-                    ? +item.quantity - 1
-                    : 1
-                  : item.quantity,
-            }
-          : { ...item }
-      )
-    );
+  const handleIncrementDecrement = (type, id) => {
+    cartDispatch({ type, payload: id });
   };
 
   const handleDeleteFromCart = (id) => {
-    setCart((prev) => prev.filter((item) => item.id !== id));
+    cartDispatch({ type: "REMOVE_FROM_CART", payload: id });
   };
 
   return (
@@ -67,7 +29,7 @@ const Cart = () => {
       <h1 className="text-xl font-semibold px-4 py-2">Items in your cart</h1>
       <div className="md:flex md:gap-x-2 px-4 md:border-t-2 pt-4">
         <div className="md:w-2/3">
-          {!Array.isArray(cart) || cart.length < 1 ? (
+          {!Array.isArray(itemsId) || itemsId.length < 1 ? (
             <div className="py-4 w-full text-center flex flex-col items-center justify-center gap-y-1">
               <h1>No Items in cart yet!</h1>
               <Link to={"/shop"}>
@@ -75,27 +37,33 @@ const Cart = () => {
               </Link>
             </div>
           ) : (
-            cart.map((item) => {
+            itemsId.map((itemId) => {
               return (
                 <CartItem
-                  key={item.id}
-                  title={item.title}
-                  price={numberWithCommas(item.price)}
-                  quantity={item.quantity}
-                  thumbnail={item.thumbnail}
-                  description={item.description}
-                  productId={item.id}
-                  totalPrice={numberWithCommas(item.price * item.quantity)}
+                  key={items[itemId].id}
+                  title={items[itemId].title}
+                  price={numberWithCommas(items[itemId].price)}
+                  quantity={items[itemId].quantity}
+                  thumbnail={items[itemId].thumbnail}
+                  description={items[itemId].description}
+                  productId={items[itemId].id}
+                  totalPrice={numberWithCommas(
+                    items[itemId].price * items[itemId].quantity
+                  )}
                   onQuantityChange={(e) =>
-                    handleQuantityChange(e, item.id, "onChange")
+                    handleQuantityChange(e, items[itemId].id, "ON_CHANGE")
                   }
-                  onAddBtnClick={() => handleIncrementDecrement("add", item.id)}
+                  onAddBtnClick={() =>
+                    handleIncrementDecrement("INCREASE", items[itemId].id)
+                  }
                   onMinusBtnClick={() =>
-                    handleIncrementDecrement("minus", item.id)
+                    handleIncrementDecrement("DECREASE", items[itemId].id)
                   }
-                  onBlur={(e) => handleQuantityChange(e, item.id, "onBlur")}
+                  onBlur={(e) =>
+                    handleQuantityChange(e, items[itemId].id, "ON_BLUR")
+                  }
                   onDeleteBtnClick={() => {
-                    handleDeleteFromCart(item.id);
+                    handleDeleteFromCart(items[itemId].id);
                   }}
                 />
               );
@@ -107,12 +75,14 @@ const Cart = () => {
             <span className="font-medium">Total</span>
             <span>${numberWithCommas(totalAmount)}</span>
           </p>
-          <Link to={cart && cart.length > 0 ? "/checkout" : null}>
+          <Link to={itemsId && itemsId.length > 0 ? "/checkout" : null}>
             <CartButton
               text={
-                cart && cart.length > 0 ? "Checkout" : "No Items to Checkout"
+                itemsId && itemsId.length > 0
+                  ? "Checkout"
+                  : "No Items to Checkout"
               }
-              disabled={cart && cart.length > 0 ? false : true}
+              disabled={itemsId && itemsId.length > 0 ? false : true}
             />
           </Link>
         </div>

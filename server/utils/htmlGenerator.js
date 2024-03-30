@@ -1,22 +1,11 @@
+import { numberWithCommas } from "./formatNumber.js";
+
 export const genHtml = (cartDetails, checkoutDetails) => {
   const { lastname, firstname, email, address, tel, city } = checkoutDetails;
   const name = `${firstname} ${lastname}`;
-  //   {
-  //     name: "user name",
-  //     email: "user@email.com",
-  //     address: "jsdhshj ddssd",
-  //     tel: "023902390",
-  //     city: "ajkjk",
-  //   };
+
   const { totalAmount, cart } = cartDetails;
-  //    {
-  //     totalAmount: 50000,
-  //     items: [
-  //       { title: "ajajsasd", quantity: 4, price: 12 },
-  //       { title: "ajajsasd", quantity: 4, price: 12 },
-  //       { title: "ajajsasd", quantity: 4, price: 12 },
-  //     ],
-  //   };
+
   const today = new Date();
   const day = today.getDate();
   const month = today.getMonth() + 1;
@@ -71,8 +60,8 @@ export const genHtml = (cartDetails, checkoutDetails) => {
                           <td>${index + 1}</td>
                           <td>${item.title}</td>
                           <td>${item.quantity}</td>
-                          <td>$${formatter.format(+item.price)}</td>
-                          <td>$${formatter.format(
+                          <td>$${numberWithCommas(+item.price)}</td>
+                          <td>$${numberWithCommas(
                             +item.quantity * +item.price
                           )}</td>
                           </tr>`;
@@ -81,7 +70,7 @@ export const genHtml = (cartDetails, checkoutDetails) => {
               </div>
               <div>
                   <h1 style="font-size: 2rem;">Total Amount</h1>
-                  <h1 style="font-size: 2.5rem;">$${formatter.format(
+                  <h1 style="font-size: 2.5rem;">$${numberWithCommas(
                     totalAmount
                   )}</h1>
               </div>

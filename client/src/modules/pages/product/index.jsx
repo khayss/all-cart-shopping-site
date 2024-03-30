@@ -1,14 +1,15 @@
 import { useParams } from "react-router-dom";
 import { useGetProduct } from "../../hooks/useGetProduct";
-import { useEffect } from "react";
-import { useAddToCart } from "../../hooks/useAddToCart";
+import { useContext, useEffect } from "react";
 import { CircularProgress, Rating } from "@mui/material";
 import CircleIcon from "@mui/icons-material/Circle";
 import { numberWithCommas } from "../../utils/formatNumber";
+import { CartContext, CartDispatchContext } from "../../contexts/cartContext";
 
 const Product = () => {
   const { getProductById, product } = useGetProduct();
-  const { handleAddToCart } = useAddToCart();
+  const { cartState } = useContext(CartContext);
+  const { cartDispatch } = useContext(CartDispatchContext);
   const { id } = useParams();
   useEffect(() => {
     getProductById(id);
@@ -50,11 +51,13 @@ const Product = () => {
       <div className="px-4">
         <button
           className={`bg-gray-200 p-3 font-medium w-full mt-1 hover:bg-gray-400 ${
-            product?.inCart ? "text-red-400" : null
+            cartState.items[product?.id] ? "text-red-400" : null
           }`}
-          onClick={() => handleAddToCart(product)}
+          onClick={() => {
+            cartDispatch({ type: "ADD_TO_CART", payload: product });
+          }}
         >
-          {product?.inCart ? "Remove from Cart" : "Add to Cart"}
+          {cartState.items[product?.id] ? "Remove from Cart" : "Add to Cart"}
         </button>
       </div>
       <div className="w-full px-4 flex flex-col gap-y-4 py-4">
