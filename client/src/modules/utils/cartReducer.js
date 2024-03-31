@@ -53,7 +53,8 @@ export const cartReducer = (state, action) => {
               [action.payload.id]: {
                 ...state.items[action.payload.id],
                 quantity:
-                  action.payload.e.target.value == ("" || "0")
+                  action.payload.e.target.value == "" ||
+                  action.payload.e.target.value == "0"
                     ? 1
                     : action.payload.e.target.value >
                       state.items[action.payload.id].stock
