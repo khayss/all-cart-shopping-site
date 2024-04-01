@@ -46,7 +46,7 @@ const LandingPage = () => {
       <div className="border-t-2 border-gray-200 h-auto">
         <h2 className="text-xl font-medium py-2">Featured Items</h2>
         <div className="grid grid-cols-1 gap-y-2 md:gap-y-0 md:gap-x-2 md:grid-cols-2 lg:grid-cols-3 h-auto">
-          {featuredProducts.map((product) => (
+          {featuredProducts?.map((product) => (
             <HomeCard
               key={product.id}
               header={product.title}
@@ -64,7 +64,7 @@ const LandingPage = () => {
       <div className="border-t-2 border-gray-200 h-auto">
         <h2 className="text-xl font-medium py-2">Popular Brands</h2>
         <div className="grid grid-cols-1 gap-y-2 md:gap-y-0 md:gap-x-2 md:grid-cols-2 lg:grid-cols-3 h-auto">
-          {PopularBrands.map((product) => (
+          {PopularBrands?.map((product) => (
             <HomeCard
               key={product.id}
               header={product.brand}
@@ -77,7 +77,7 @@ const LandingPage = () => {
       <div className="border-t-2 border-gray-200">
         <h2 className="text-xl font-medium py-2">Featured Categories</h2>
         <div className="grid grid-cols-1 gap-y-2 md:gap-y-0 md:gap-x-2 md:grid-cols-2 lg:grid-cols-3 h-auto">
-          {trendingCategories.map((product) => (
+          {trendingCategories?.map((product) => (
             <HomeCard
               key={product.id}
               header={product.category}
